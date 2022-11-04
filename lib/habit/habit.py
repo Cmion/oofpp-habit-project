@@ -5,7 +5,7 @@ class Habit:
     def __init__(self, name, description, periodicity, streak_in_days=None,
                  streak_in_weeks=None, start_date=None, current_streak_date=None, habit_id=None):
         """
-        Creates an Habit
+        Creates a Habit
         :param name:
         :param description:
         :param periodicity:
@@ -61,7 +61,19 @@ class Habit:
             start_date=row[4],
             streak_in_days=row[5],
             streak_in_weeks=row[6],
+            current_streak_date=row[7],
         )
+
+    @staticmethod
+    def to_db_row(habit):
+        """
+        Creates a db row tuple from a habit
+        :param habit:
+        :return :class:tuple
+        """
+
+        return (habit.name, habit.description, habit.periodicity,
+                habit.start_date, habit.current_streak_date, habit.streak_in_days, habit.streak_in_weeks)
 
     @staticmethod
     def from_db_to_list(rows):

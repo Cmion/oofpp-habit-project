@@ -41,9 +41,13 @@ class Database:
             :param habit: habit to insert
             :return: None
         """
-        self.cursor.execute(f'''INSERT INTO HABIT (NAME, DESCRIPTION, PERIODICITY, START_DATE, CURRENT_STREAK_DATE, 
+        self.cursor.execute('''INSERT INTO HABIT (NAME, DESCRIPTION, PERIODICITY, START_DATE, CURRENT_STREAK_DATE, 
                         STREAK_IN_DAYS, STREAK_IN_WEEKS) \
-      VALUES ({habit.name}, {habit.description}, {habit.periodicity}, {habit.start_date}, NULL, 0, 0 )''')
+      VALUES (?, ?, ?, ?, ?, ?, ?)''', (habit.name, habit.description, habit.periodicity, habit.start_date, None, 0, 0))
+        self.db.commit()
+
+    def insertMany(self, habits):
+        self.cursor.executemany("INSERT INTO HABIT VALUES(?, ?, ?, ?, ?, ?, ?)", habits)
         self.db.commit()
 
     def delete(self, habit_id):
@@ -51,7 +55,7 @@ class Database:
             :param habit_id: habit to delete
             :return: None
         """
-        self.cursor.execute(f"DELETE from HABIT where ID = {habit_id};")
+        self.cursor.execute(f"DELETE from HABIT where ID = :habit_id;", {'habit_id': habit_id})
         self.db.commit()
 
     def select_all(self):
@@ -74,6 +78,6 @@ class Database:
         """
         cursor = self.cursor.execute(
             f'''SELECT id, name, description, periodicity, start_date, 
-            streak_in_days, streak_in_weeks, current_streak_date FROM HABIT WHERE {column_name} = {column_query};
-        ''')
+            streak_in_days, streak_in_weeks, current_streak_date FROM HABIT WHERE :column_name = :column_query;
+        ''', {'column_query': column_query, 'column_name': column_name})
         return cursor.fetchall()

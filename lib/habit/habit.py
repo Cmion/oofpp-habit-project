@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import floor
 
 
 class Habit:
@@ -23,8 +24,8 @@ class Habit:
         self.description = description
         self.periodicity = periodicity
         self.periodicity_duration = self.__periodicity_to_days()
-        self.start_date = start_date or datetime.now().timestamp()
-        self.current_streak_date = current_streak_date
+        self.start_date = start_date or datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.current_streak_date = current_streak_date or ''
 
     def __str__(self):
         return self.name
@@ -45,6 +46,34 @@ class Habit:
             return 1
 
         return 0
+
+    def recalculate_data(self):
+        """
+        Recalculates the data
+        :return:
+        """
+
+        current_streak_date = datetime.strptime(self.current_streak_date, '%Y-%m-%d %H:%M:%S')
+        current_date = datetime.now()
+        difference = current_date - current_streak_date
+
+        if difference.days > self.periodicity_duration:
+            self.streak_in_days = 0
+            self.streak_in_weeks = 0
+            return
+
+        if self.periodicity_duration > difference.days:
+            print('You cannot mark this habit as complete twice within it\'s periodicity\n')
+            return
+
+        if self.periodicity_duration == 1:
+            self.streak_in_days = self.streak_in_days + 1
+            self.streak_in_weeks = floor(self.streak_in_days / 7)
+            return
+
+        if self.periodicity_duration == 7:
+            self.streak_in_weeks = self.streak_in_weeks + 1
+            self.streak_in_days = self.streak_in_weeks * 7
 
     @staticmethod
     def from_db_row(row):

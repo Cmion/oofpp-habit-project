@@ -5,6 +5,7 @@ class Database:
     """
     This class is used to create a database connection, and to manage the database.
     """
+
     def __init__(self, db_file):
         """ Create a database connection to the SQLite database
             specified by the db_file
@@ -30,8 +31,8 @@ class Database:
                  NAME           TEXT    NOT NULL,
                  DESCRIPTION    TEXT     NOT NULL,
                  PERIODICITY    CHAR(50)  NOT NULL, 
-                 START_DATE INT NOT NULL,
-                 CURRENT_STREAK_DATE INT DEFAULT NULL,
+                 START_DATE CHAR(50) NOT NULL,
+                 CURRENT_STREAK_DATE CHAR(50) DEFAULT NULL,
                  STREAK_IN_DAYS INT NOT NULL DEFAULT 0,
                  STREAK_IN_WEEKS INT NOT NULL DEFAULT 0,);
          ''')
@@ -81,3 +82,16 @@ class Database:
             streak_in_days, streak_in_weeks, current_streak_date FROM HABIT WHERE :column_name = :column_query;
         ''', {'column_query': column_query, 'column_name': column_name})
         return cursor.fetchall()
+
+    def updateOne(self, habit_id, habit):
+        self.cursor.execute('''UPDATE TABLE set NAME = :name, DESCRIPTION = :description, PERIODICITY = :periodicity, 
+        START_DATE = :start_date, CURRENT_STREAK_DATE = :current_streak_date, 
+                        STREAK_IN_DAYS = :streak_in_days, STREAK_IN_WEEKS = :streak_in_weeks where ID = :habit_id''',
+                            {'habit_id': habit_id, 'name': habit.name, 'periodicity': habit.periodicity,
+                             'start_date': habit.start_date, 'streak_in_weeks': habit.streak_in_weeks,
+                             'current_streak_date': habit.current_streak_date, 'streak_in_days': habit.streak_in_days})
+        self.db.commit()
+
+    def close_connection(self):
+        self.cursor.close()
+        self.db.close()

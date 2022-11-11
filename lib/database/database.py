@@ -2,22 +2,24 @@ import sqlite3
 
 
 class Database:
+    DB_FILE_PATH = './habits.db'
     """
     This class is used to create a database connection, and to manage the database.
     """
 
-    def __init__(self, db_file):
+    def __init__(self):
         """ Create a database connection to the SQLite database
             specified by the db_file
-            :param db_file: database file
             :return: Connection object or None
         """
         self.db = None
         self.cursor = None
         try:
-            self.db_path = db_file
-            self.db = sqlite3.connect(db_file)
+            self.db_path = Database.DB_FILE_PATH
+            self.db = sqlite3.connect(self.db_path)
+
             self.cursor = self.db.cursor()
+            self.create_table()
         except sqlite3.Error as e:
             print(e)
 
@@ -25,17 +27,23 @@ class Database:
         """ Create the database table if it does not exist
             :return: None
         """
+        # print(self.db)
         self.cursor.execute(
-            '''CREATE TABLE IF NOT EXISTS  HABIT
-                 (ID INT PRIMARY KEY     NOT NULL,
+            '''CREATE TABLE IF NOT EXISTS HABIT
+                (
+                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                  NAME           TEXT    NOT NULL,
                  DESCRIPTION    TEXT     NOT NULL,
                  PERIODICITY    CHAR(50)  NOT NULL, 
                  START_DATE CHAR(50) NOT NULL,
                  CURRENT_STREAK_DATE CHAR(50) DEFAULT NULL,
                  STREAK_IN_DAYS INT NOT NULL DEFAULT 0,
-                 STREAK_IN_WEEKS INT NOT NULL DEFAULT 0,);
+                 STREAK_IN_WEEKS INT NOT NULL DEFAULT 0,
+                 LONGEST_STREAK_IN_DAYS INT NOT NULL DEFAULT 0
+                 );
          ''')
+
+        # print('Table is ready')
 
     def insert(self, habit):
         """ Insert a habit into database using the parameters specified
@@ -43,12 +51,20 @@ class Database:
             :return: None
         """
         self.cursor.execute('''INSERT INTO HABIT (NAME, DESCRIPTION, PERIODICITY, START_DATE, CURRENT_STREAK_DATE, 
-                        STREAK_IN_DAYS, STREAK_IN_WEEKS) \
-      VALUES (?, ?, ?, ?, ?, ?, ?)''', (habit.name, habit.description, habit.periodicity, habit.start_date, None, 0, 0))
+                        STREAK_IN_DAYS, STREAK_IN_WEEKS, LONGEST_STREAK_IN_DAYS) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', (habit.name, habit.description, habit.periodicity, habit.start_date,
+                                           None, 0, 0, 0))
         self.db.commit()
 
     def insertMany(self, habits):
-        self.cursor.executemany("INSERT INTO HABIT VALUES(?, ?, ?, ?, ?, ?, ?)", habits)
+        """
+        Insert multiple habits into the database
+        :param habits: list of habits to insert
+        :return: None
+        """
+        # print(habits)
+        self.cursor.executemany("""INSERT INTO HABIT (NAME, DESCRIPTION, PERIODICITY, START_DATE, CURRENT_STREAK_DATE,
+        STREAK_IN_DAYS, STREAK_IN_WEEKS, LONGEST_STREAK_IN_DAYS)  VALUES(?, ?, ?, ?, ?, ?, ?, ?)""", habits)
         self.db.commit()
 
     def delete(self, habit_id):
@@ -66,7 +82,7 @@ class Database:
         """
         cursor = self.cursor.execute(
             '''SELECT id, name, description, periodicity, start_date, 
-                streak_in_days, streak_in_weeks, current_streak_date FROM HABIT;
+                streak_in_days, streak_in_weeks, current_streak_date, longest_streak_in_days FROM HABIT;
             ''')
 
         return cursor.fetchall()
@@ -78,18 +94,29 @@ class Database:
             :return: list of habits
         """
         cursor = self.cursor.execute(
-            f'''SELECT id, name, description, periodicity, start_date, 
-            streak_in_days, streak_in_weeks, current_streak_date FROM HABIT WHERE :column_name = :column_query;
+            '''SELECT id, name, description, periodicity, start_date, 
+            streak_in_days, streak_in_weeks, current_streak_date, longest_streak_in_days FROM HABIT 
+            WHERE :column_name = :column_query;
         ''', {'column_query': column_query, 'column_name': column_name})
         return cursor.fetchall()
 
-    def updateOne(self, habit_id, habit):
+    def update_one(self, habit_id, habit):
+        """
+        Update a habit in the database
+        :param habit_id: id of the habit to update
+        :param habit: habit to update
+        :return: None
+        """
+
         self.cursor.execute('''UPDATE TABLE set NAME = :name, DESCRIPTION = :description, PERIODICITY = :periodicity, 
         START_DATE = :start_date, CURRENT_STREAK_DATE = :current_streak_date, 
-                        STREAK_IN_DAYS = :streak_in_days, STREAK_IN_WEEKS = :streak_in_weeks where ID = :habit_id''',
+                        STREAK_IN_DAYS = :streak_in_days, STREAK_IN_WEEKS = :streak_in_weeks, 
+                        LONGEST_STREAK_IN_DAYS = :longest_streak_in_days where ID = :habit_id''',
                             {'habit_id': habit_id, 'name': habit.name, 'periodicity': habit.periodicity,
                              'start_date': habit.start_date, 'streak_in_weeks': habit.streak_in_weeks,
-                             'current_streak_date': habit.current_streak_date, 'streak_in_days': habit.streak_in_days})
+                             'current_streak_date': habit.current_streak_date,
+                             'streak_in_days': habit.streak_in_days,
+                             'longest_streak_in_days': habit.longest_streak_in_days})
         self.db.commit()
 
     def close_connection(self):

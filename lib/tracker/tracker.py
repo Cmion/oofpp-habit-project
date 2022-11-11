@@ -54,26 +54,30 @@ def create_sample_habits():
         Habit(habit_id=1, name='Workout', description='Hit the gym twice a week', periodicity='weekly',
               streak_in_weeks=45, streak_in_days=45 * 7,
               start_date=(subtract_date(weeks=45).strftime('%Y-%m-%d %H:%M:%S')),
-              current_streak_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+              current_streak_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+              longest_streak_in_days=45 * 8,
               ),
         Habit(habit_id=2, name='Eat healthy', description='Skip soda and hot dogs', periodicity='daily',
               streak_in_weeks=18, streak_in_days=18 * 7,
-              start_date=(subtract_date(weeks=18).strftime('%Y-%m-%d %H:%M:%S')),
+              longest_streak_in_days=18 * 8, start_date=(subtract_date(weeks=18).strftime('%Y-%m-%d %H:%M:%S')),
               current_streak_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
               ),
         Habit(habit_id=3, name='Sleep well', description='Sleep at least 8 hours per night', periodicity='daily',
               streak_in_weeks=50, streak_in_days=50 * 7,
+              longest_streak_in_days=50 * 8,
               start_date=(subtract_date(weeks=50).strftime('%Y-%m-%d %H:%M:%S')),
               current_streak_date=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
               ),
         Habit(habit_id=4, name='Family', description='''Be home early for dinner, read bedtime stories to Karl, 
                 Jesse and Sophie, spend quality time chitchatting with Katherine (Wife)''', periodicity='daily',
               streak_in_weeks=323, streak_in_days=323 * 7,
+              longest_streak_in_days=323 * 8,
               start_date=(subtract_date(weeks=323).strftime('%Y-%m-%d %H:%M:%S')),
               current_streak_date=(subtract_date(weeks=2))
               ),
         Habit(habit_id=5, name='Reading', description='Spend 3 hours weekly reading books', periodicity='weekly',
               streak_in_weeks=18, streak_in_days=18 * 7,
+              longest_streak_in_days=18 * 8,
               start_date=(subtract_date(weeks=18).strftime('%Y-%m-%d %H:%M:%S')),
               current_streak_date=(subtract_date(weeks=4))
               ),
@@ -81,24 +85,32 @@ def create_sample_habits():
 
 
 class HabitTracker:
-    DB_FILE_PATH = '../../habits.sqlite'
-
     def __init__(self):
-        self.database = Database(db_file=HabitTracker.DB_FILE_PATH)
-        self.__load_sample_data()
+        self.database = Database()
+        self.__insert_sample_data()
         self.__refresh()
 
     def __refresh(self):
         self.habits = self.database.select_all()
         self.dataframe = pandas.DataFrame(self.habits, columns=['Id', 'Name', 'Description', 'Periodicity',
                                                                 'Start date', 'Current streak date', 'Streak (days)',
-                                                                'Streak (weeks)'])
+                                                                'Streak (weeks)', 'Longest streak (days)'])
 
         self.dataframe.sort_values('Streak (days)', inplace=True, ascending=True)
 
-    def __load_sample_data(self):
+    def __insert_sample_data(self):
         habits = list(map(Habit.to_db_row, create_sample_habits()))
         self.database.insertMany(habits)
+
+    @staticmethod
+    def print_from_list(habits):
+        dataframe = pandas.DataFrame(habits, columns=['Id', 'Name', 'Description', 'Periodicity',
+                                                      'Start date', 'Current streak date', 'Streak (days)',
+                                                      'Streak (weeks)', 'Longest streak (days)'])
+
+        dataframe.sort_values('Streak (days)', inplace=True, ascending=True)
+        print(tabulate(dataframe, tablefmt='fancy_grid', headers='keys'))
+        print('\n')
 
     def show_data(self):
         """
@@ -106,6 +118,7 @@ class HabitTracker:
         :return:
         """
         print(tabulate(self.dataframe, tablefmt='fancy_grid', headers='keys'))
+        print('\n')
 
     def add_habit(self, name, description, periodicity):
         habit = Habit(name, description, periodicity)
@@ -119,5 +132,7 @@ class HabitTracker:
     def manage_habit(self, habit_id):
         habit = Habit.from_db_row(self.database.select_by_column('ID', habit_id))
         habit.recalculate_data()
-        self.database.updateOne(habit)
+        self.database.update_one(habit_id, habit)
         self.__refresh()
+
+

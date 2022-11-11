@@ -4,7 +4,8 @@ from math import floor
 
 class Habit:
     def __init__(self, name, description, periodicity, streak_in_days=None,
-                 streak_in_weeks=None, start_date=None, current_streak_date=None, habit_id=None):
+                 streak_in_weeks=None, start_date=None, current_streak_date=None, longest_streak_in_days=None,
+                 habit_id=None):
         """
         Creates a Habit
         :param name:
@@ -12,6 +13,7 @@ class Habit:
         :param periodicity:
         :param streak_in_days:
         :param streak_in_weeks:
+        :param longest_streak_in_days:
         :param start_date:
         :param current_streak_date:
         :param habit_id:
@@ -20,6 +22,7 @@ class Habit:
         self.habit_id = habit_id
         self.streak_in_days = streak_in_days or 0
         self.streak_in_weeks = streak_in_weeks or 0
+        self.longest_streak_in_days = longest_streak_in_days or 0
         self.name = name
         self.description = description
         self.periodicity = periodicity
@@ -75,6 +78,9 @@ class Habit:
             self.streak_in_weeks = self.streak_in_weeks + 1
             self.streak_in_days = self.streak_in_weeks * 7
 
+        if self.streak_in_days > self.longest_streak_in_days:
+            self.longest_streak_in_days = self.streak_in_days
+
     @staticmethod
     def from_db_row(row):
         """
@@ -102,7 +108,8 @@ class Habit:
         """
 
         return (habit.name, habit.description, habit.periodicity,
-                habit.start_date, habit.current_streak_date, habit.streak_in_days, habit.streak_in_weeks)
+                habit.start_date, habit.current_streak_date, habit.streak_in_days,
+                habit.streak_in_weeks, habit.longest_streak_in_days)
 
     @staticmethod
     def from_db_to_list(rows):

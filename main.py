@@ -1,5 +1,6 @@
 from lib.commandline_manager.commandline_manager import CommandlineManager
 
+
 def main():
     command_line_manager = CommandlineManager()
 

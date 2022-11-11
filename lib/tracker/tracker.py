@@ -2,7 +2,8 @@
 from datetime import datetime, timedelta
 
 import pandas
-from tabulate import tabulate
+from colorama import Fore
+from prettytable import PrettyTable, ORGMODE, FRAME
 
 from lib.database.database import Database
 from lib.habit.habit import Habit
@@ -104,21 +105,40 @@ class HabitTracker:
 
     @staticmethod
     def print_from_list(habits):
-        dataframe = pandas.DataFrame(habits, columns=['Id', 'Name', 'Description', 'Periodicity',
-                                                      'Start date', 'Current streak date', 'Streak (days)',
-                                                      'Streak (weeks)', 'Longest streak (days)'])
+        columns = ['Id', 'Name', 'Description', 'Periodicity',
+                   'Start date', 'Current streak date', 'Streak (days)',
+                   'Streak (weeks)', 'Longest streak (days)']
+        table = PrettyTable()
 
-        dataframe.sort_values('Streak (days)', inplace=True, ascending=True)
-        print(tabulate(dataframe, tablefmt='fancy_grid', headers='keys'))
-        print('\n')
+        table.field_names = columns
+        table.add_rows(habits)
+        table.max_width = 30
+        table.title = 'Habits'
+        table.format = True
+        table.horizontal_align_char = '0'
+        table.hrules = FRAME
+        table.set_style(ORGMODE)
+        print(Fore.LIGHTWHITE_EX + table.get_string())
 
     def show_data(self):
         """
         Prints the data in the database.
         :return:
         """
-        print(tabulate(self.dataframe, tablefmt='fancy_grid', headers='keys'))
-        print('\n')
+        columns = ['Id', 'Name', 'Description', 'Periodicity',
+                   'Start date', 'Current streak date', 'Streak (days)',
+                   'Streak (weeks)', 'Longest streak (days)']
+        table = PrettyTable()
+
+        table.field_names = columns
+        table.add_rows(self.habits)
+        table.max_width = 30
+        table.title = 'Habits'
+        table.format = True
+        table.horizontal_align_char = '0'
+        table.hrules = FRAME
+        table.set_style(ORGMODE)
+        print(Fore.LIGHTWHITE_EX + table.get_string())
 
     def add_habit(self, name, description, periodicity):
         habit = Habit(name, description, periodicity)
@@ -134,5 +154,3 @@ class HabitTracker:
         habit.recalculate_data()
         self.database.update_one(habit_id, habit)
         self.__refresh()
-
-

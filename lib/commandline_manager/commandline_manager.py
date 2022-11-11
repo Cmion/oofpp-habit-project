@@ -18,6 +18,9 @@ class CommandlineManager:
             self.entry()
 
     def exit(self):
+        """
+        Exit the application
+        """
         self.habit_tracker.show_data()
         self.is_active = False
 

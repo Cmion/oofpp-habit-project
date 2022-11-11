@@ -28,6 +28,7 @@ class Database:
             :return: None
         """
         # print(self.db)
+        self.cursor.execute("DROP TABLE IF EXISTS HABIT")
         self.cursor.execute(
             '''CREATE TABLE IF NOT EXISTS HABIT
                 (

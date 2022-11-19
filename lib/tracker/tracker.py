@@ -1,4 +1,5 @@
 # class to track habits
+import sqlite3
 from datetime import datetime, timedelta
 
 import pandas
@@ -146,8 +147,12 @@ class HabitTracker:
         self.__refresh()
 
     def remove_habit(self, habit_id):
-        self.database.delete(habit_id)
-        self.__refresh()
+        try:
+            self.database.delete(habit_id)
+            self.__refresh()
+            return habit_id
+        except sqlite3.Error:
+            return None
 
     def checkoff_habit(self, habit_id):
         db_row = self.database.select_one(habit_id)

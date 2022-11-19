@@ -72,7 +72,8 @@ class CommandlineManager:
 
     def add_habit_command(self):
         habit_name = self.input("What is the name of the habit you want to add? ")
-        habit_description = self.input("What is the description of the habit you want to add? ")
+        habit_description = self.input("Please enter a description for " + Fore.LIGHTBLUE_EX + f'({habit_name})'
+                                       + Fore.LIGHTWHITE_EX)
         self.print('Choose your habit periodicity: ')
         options = ["[w] Weekly", "[d] Daily", '[c] Cancel']
         terminal_menu = TerminalMenu(options)
@@ -151,4 +152,23 @@ class CommandlineManager:
         self.entry(msg='\nWhat would you like to do next? ')
 
     def delete_habit_command(self):
-        pass
+        options = list(map(lambda habit: f'#{habit[0]} {habit[1]} ({habit[3]})',
+                           self.habit_tracker.habits))
+        self.print('Which habit(s) do you want to delete? (Select one or more to check) ')
+        terminal_menu = TerminalMenu(options, multi_select=True, show_multi_select_hint=True)
+        menu_entry_indices = terminal_menu.show()
+
+        print(
+            self.colorize('\n'.join(map(lambda item: u"\u007E " + item, terminal_menu.chosen_menu_entries)),
+                          color=Fore.LIGHTYELLOW_EX))
+
+        for index in menu_entry_indices:
+            entry = options[index]
+            habit_id = str(entry.split(' ')[0])[1]
+            response = self.habit_tracker.remove_habit(habit_id=int(habit_id))
+            if response is None:
+                print(self.colorize(u"\u2715" + f" Deleting {entry} failed. Try again!", color=Fore.LIGHTRED_EX))
+            else:
+                print(self.colorize(u"\u2714" + f" {entry} deleted successfully", color=Fore.LIGHTGREEN_EX))
+
+        self.entry(msg='\nWhat would you like to do next? ')

@@ -54,7 +54,8 @@ class Database:
         self.cursor.execute('''INSERT INTO HABIT (NAME, DESCRIPTION, PERIODICITY, START_DATE, CURRENT_STREAK_DATE, 
                         STREAK_IN_DAYS, STREAK_IN_WEEKS, LONGEST_STREAK_IN_DAYS) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)''', (habit.name, habit.description, habit.periodicity, habit.start_date,
-                                           None, 0, 0, 0))
+                                           habit.current_streak_date, habit.streak_in_days,
+                                           habit.streak_in_weeks, habit.longest_streak_in_days))
         self.db.commit()
 
     def insertMany(self, habits):
@@ -82,8 +83,8 @@ class Database:
 
         """
         cursor = self.cursor.execute(
-            '''SELECT id, name, description, periodicity, start_date, 
-                streak_in_days, streak_in_weeks, current_streak_date, longest_streak_in_days FROM HABIT;
+            '''SELECT ID, name, description, periodicity, start_date, current_streak_date,
+                streak_in_days, streak_in_weeks, longest_streak_in_days FROM HABIT;
             ''')
 
         return cursor.fetchall()
@@ -94,8 +95,8 @@ class Database:
 
         """
         cursor = self.cursor.execute(
-            '''SELECT id, name, description, periodicity, start_date, 
-                streak_in_days, streak_in_weeks, current_streak_date, longest_streak_in_days FROM HABIT 
+            '''SELECT ID, name, description, periodicity, start_date, current_streak_date,
+                streak_in_days, streak_in_weeks, longest_streak_in_days FROM HABIT 
                 WHERE id = :habit_id;
             ''', {'habit_id': habit_id})
 

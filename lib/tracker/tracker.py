@@ -151,8 +151,15 @@ class HabitTracker:
 
     def checkoff_habit(self, habit_id):
         db_row = self.database.select_one(habit_id)
-        if db_row is not None:
-            habit = Habit.from_db_row(db_row)
-            habit.recalculate_data()
+        if db_row is None:
+            return None
+
+        habit = Habit.from_db_row(db_row)
+        result = habit.recalculate_data()
+
+        if result is not None:
             self.database.update_one(habit_id, habit)
             self.__refresh()
+            return db_row
+        else:
+            return None

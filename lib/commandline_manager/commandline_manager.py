@@ -86,7 +86,7 @@ class CommandlineManager:
 
         self.habit_tracker.add_habit(habit_name, habit_description, options[menu_entry_index].split(' ')[1])
 
-        print(self.colorize(u"\u2713 Habit added successfully\n", color=Fore.LIGHTGREEN_EX))
+        print(self.colorize(u"\u2714 Habit added successfully\n", color=Fore.LIGHTGREEN_EX))
 
         self.restart_add_habit_command()
 
@@ -142,11 +142,13 @@ class CommandlineManager:
         for index in menu_entry_indices:
             entry = options[index]
             habit_id = str(entry.split(' ')[0])[1]
-            self.habit_tracker.checkoff_habit(habit_id=int(habit_id))
+            response = self.habit_tracker.checkoff_habit(habit_id=int(habit_id))
+            if response is None:
+                print(self.colorize(u"\u2715" + f" Checking off {entry} failed. Try again!", color=Fore.LIGHTRED_EX))
+            else:
+                print(self.colorize(u"\u2714" + f" {entry} completed successfully", color=Fore.LIGHTGREEN_EX))
 
-        print(self.colorize(u"\u2713 Habit(s) completed successfully\n", color=Fore.LIGHTGREEN_EX))
-
-        self.entry(msg='What would you like to do next? ')
+        self.entry(msg='\nWhat would you like to do next? ')
 
     def delete_habit_command(self):
         pass

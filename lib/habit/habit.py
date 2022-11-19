@@ -1,6 +1,8 @@
 from datetime import datetime
 from math import floor
 
+from colorama import Fore, Style
+
 
 class Habit:
     def __init__(self, name, description, periodicity, streak_in_days=None,
@@ -63,16 +65,19 @@ class Habit:
         if difference.days > self.periodicity_duration:
             self.streak_in_days = 0
             self.streak_in_weeks = 0
-            return
+            # return
 
         if self.periodicity_duration > difference.days:
-            print('You cannot mark this habit as complete twice within it\'s periodicity\n')
-            return
+            print(Fore.LIGHTRED_EX +
+                  u"\u2715 " + f'''You cannot mark (#{self.habit_id} {self.name}) as complete twice {self.periodicity}
+''')
+            print(Style.RESET_ALL)
+            return None
 
         if self.periodicity_duration == 1:
             self.streak_in_days = self.streak_in_days + 1
             self.streak_in_weeks = floor(self.streak_in_days / 7)
-            return
+            # return
 
         if self.periodicity_duration == 7:
             self.streak_in_weeks = self.streak_in_weeks + 1
@@ -80,6 +85,10 @@ class Habit:
 
         if self.streak_in_days > self.longest_streak_in_days:
             self.longest_streak_in_days = self.streak_in_days
+
+        self.current_streak_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        return self
 
     @staticmethod
     def from_db_row(row):
@@ -94,9 +103,10 @@ class Habit:
             description=row[2],
             periodicity=row[3],
             start_date=row[4],
-            streak_in_days=row[5],
-            streak_in_weeks=row[6],
-            current_streak_date=row[7],
+            current_streak_date=row[5],
+            streak_in_days=row[6],
+            streak_in_weeks=row[7],
+            longest_streak_in_days=row[8],
         )
 
     @staticmethod

@@ -83,8 +83,7 @@ class Database:
 
         """
         cursor = self.cursor.execute(
-            '''SELECT ID, name, description, periodicity, start_date, current_streak_date,
-                streak_in_days, streak_in_weeks, longest_streak_in_days FROM HABIT;
+            '''SELECT id, name, description, periodicity, start_date, current_streak_date, streak_in_days, streak_in_weeks, longest_streak_in_days from HABIT;
             ''')
 
         return cursor.fetchall()
@@ -109,8 +108,8 @@ class Database:
             :return: list of habits
         """
         cursor = self.cursor.execute(
-            '''SELECT id, name, description, periodicity, start_date, 
-            streak_in_days, streak_in_weeks, current_streak_date, longest_streak_in_days FROM HABIT 
+            '''SELECT id, name, description, periodicity, start_date, current_streak_date,
+            streak_in_days, streak_in_weeks, longest_streak_in_days FROM HABIT 
             WHERE :column_name = :column_query;
         ''', {'column_query': column_query, 'column_name': column_name})
         return cursor.fetchall()

@@ -1,7 +1,7 @@
 from datetime import datetime
 from math import floor
 
-from colorama import Fore, Style
+from colorama import Fore
 
 
 class Habit:
@@ -52,9 +52,26 @@ class Habit:
 
         return 0
 
-    def recalculate_data(self):
+    def evaluate_streak(self):
         """
-        Recalculates the data
+        Resets the streaks if the last streak date is greater than the habit periodicity duration (in days).
+        :return:
+        """
+
+        current_streak_date = datetime.strptime(self.current_streak_date, '%Y-%m-%d %H:%M:%S')
+        current_date = datetime.now()
+        difference = current_date - current_streak_date
+        if difference.days > self.periodicity_duration:
+            if self.streak_in_days > self.longest_streak_in_days:
+                self.longest_streak_in_days = self.streak_in_days
+            self.streak_in_days = 0
+            self.streak_in_weeks = 0
+            return self
+        return self
+
+    def recalculate_data(self, print_error=True):
+        """
+        Recalculates the habit streaks
         :return:
         """
 
@@ -62,17 +79,27 @@ class Habit:
         current_date = datetime.now()
         difference = current_date - current_streak_date
 
+        # current_date_start_of = datetime(current_date.year, current_date.month, current_date.day, 0, 0, 0, 0)
+        # current_streak_date_start_of = datetime(current_streak_date.year, current_streak_date.month,
+        #                                         current_streak_date.day, 0, 0, 0, 0)
+        #
+        # if current_date_start_of > current_streak_date_start_of:
+        #     pass
+
+        if self.periodicity_duration > difference.days:
+            if print_error is True:
+                print(Fore.LIGHTRED_EX +
+                      u"\u2715 " + f'''You cannot mark (#{self.habit_id} {self.name}) as complete twice {self.periodicity}
+''', end=' ')
+            # print(Style.RESET_ALL)
+            return None
+
         if difference.days > self.periodicity_duration:
+            if self.streak_in_days > self.longest_streak_in_days:
+                self.longest_streak_in_days = self.streak_in_days
             self.streak_in_days = 0
             self.streak_in_weeks = 0
             # return
-
-        if self.periodicity_duration > difference.days:
-            print(Fore.LIGHTRED_EX +
-                  u"\u2715 " + f'''You cannot mark (#{self.habit_id} {self.name}) as complete twice {self.periodicity}
-''')
-            print(Style.RESET_ALL)
-            return None
 
         if self.periodicity_duration == 1:
             self.streak_in_days = self.streak_in_days + 1

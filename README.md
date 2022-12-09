@@ -36,10 +36,16 @@ git clone https://github.com/Cmion/oofpp-habit-project.git
 cd oofpp-habit-project
 ```
 
-### Create and activate a virtual environment using `venv`
+### Create and activate a virtual environment using `venv` (macOS)
 ```shell
 python3 -m venv venv
 source venv/bin/activate
+```
+
+### Create and activate a virtual environment using `venv` (Windows)
+```shell
+python3 -m venv venv
+.\venv\Scripts\activate
 ```
 
 Congratulations 🎉, you have successfully installed python,  venv, activated it. Now continue, just few more steps to go.

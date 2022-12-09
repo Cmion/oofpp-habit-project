@@ -11,8 +11,8 @@ from lib.helpers.helpers import create_sample_habits
 
 
 class HabitTracker:
-    def __init__(self):
-        self.database = Database()
+    def __init__(self, db_path):
+        self.database = Database(db_path)
         self.__insert_sample_data()
         self.__refresh()
 

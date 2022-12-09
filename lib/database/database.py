@@ -2,12 +2,11 @@ import sqlite3
 
 
 class Database:
-    DB_FILE_PATH = './habits.db'
     """
     This class is used to create a database connection, and to manage the database.
     """
 
-    def __init__(self):
+    def __init__(self, db_path):
         """ Create a database connection to the SQLite database
             specified by the db_file
             :return: Connection object or None
@@ -15,7 +14,7 @@ class Database:
         self.db = None
         self.cursor = None
         try:
-            self.db_path = Database.DB_FILE_PATH
+            self.db_path = db_path
             self.db = sqlite3.connect(self.db_path)
 
             self.cursor = self.db.cursor()
@@ -27,8 +26,9 @@ class Database:
         """ Create the database table if it does not exist
             :return: None
         """
+
         # print(self.db)
-        self.cursor.execute("DROP TABLE IF EXISTS HABIT")
+        # self.cursor.execute("DROP TABLE IF EXISTS HABIT")
         self.cursor.execute(
             '''CREATE TABLE IF NOT EXISTS HABIT
                 (

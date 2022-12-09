@@ -10,10 +10,10 @@ from lib.tracker.tracker import HabitTracker
 class CommandlineManager:
     FOREGROUND = Fore.LIGHTWHITE_EX
 
-    def __init__(self):
+    def __init__(self, db_path):
         init_colorama()
         self.is_active = False
-        self.habit_tracker = HabitTracker()
+        self.habit_tracker = HabitTracker(db_path)
         self.analytics = Analytics(self.habit_tracker.database)
 
     def start(self):

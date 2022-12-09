@@ -17,6 +17,10 @@ class CommandlineManager:
         self.analytics = Analytics(self.habit_tracker.database)
 
     def start(self):
+        """
+        Starts a loop that keeps runs the program
+        :return:
+        """
         self.is_active = True
         while self.is_active:
             self.entry()
@@ -31,10 +35,21 @@ class CommandlineManager:
 
     @staticmethod
     def print(text):
+        """
+        Beautified print message
+        :param text:
+        :return:
+        """
         print(CommandlineManager.FOREGROUND + text)
 
     @staticmethod
     def colorize(text, color=None):
+        """
+        Colorizes the commandline
+        :param text:
+        :param color:
+        :return:
+        """
         if color is None:
             return CommandlineManager.FOREGROUND + text
         else:
@@ -42,11 +57,25 @@ class CommandlineManager:
 
     @staticmethod
     def input(text):
+        """
+        Customizes the input [Adds colors and highlights]
+        :param text:
+        :return:
+        """
         print(CommandlineManager.FOREGROUND + text + Fore.LIGHTYELLOW_EX)
         print(u"\u00BB", end=" ")
-        return input()
+
+        res = input()
+        if len(res.strip()) < 1:
+            return CommandlineManager.input(text)
+        return res
 
     def entry(self, msg='What would you like to do?'):
+        """
+        Entry point for application
+        :param msg:
+        :return:
+        """
         self.print(msg)
         options = ["[a] Add habit", "[m] Manage habits (delete or check-off)", "[s] See habit statistics",
                    '[p] Show my habits', '[e] Exit']
@@ -77,7 +106,12 @@ class CommandlineManager:
             return
 
     def add_habit_command(self):
+        """
+        Prompts user to add a habit
+        :return:
+        """
         habit_name = self.input("What is the name of the habit you want to add? ")
+
         habit_description = self.input("Please enter a description for " + Fore.LIGHTBLUE_EX + f'({habit_name})'
                                        + Fore.LIGHTWHITE_EX)
         self.print('Choose your habit periodicity: ')
@@ -91,6 +125,8 @@ class CommandlineManager:
             self.entry()
             return
 
+
+
         self.habit_tracker.add_habit(habit_name, habit_description, options[menu_entry_index].split(' ')[1])
 
         print(self.colorize(u"\u2714 Habit added successfully\n", color=Fore.LIGHTGREEN_EX))
@@ -98,6 +134,10 @@ class CommandlineManager:
         self.restart_add_habit_command()
 
     def restart_add_habit_command(self):
+        """
+        Restarts the add habit process
+        :return:
+        """
         options = ["[y] Yes", "[n] No", '[e] Exit']
         CommandlineManager.print('Do you want to add another habit?')
         terminal_menu = TerminalMenu(options)
@@ -117,8 +157,12 @@ class CommandlineManager:
         self.exit()
 
     def manage_habit_command(self):
+        """
+        Manages habit deletion and checking-off
+        :return:
+        """
         self.print('Do you want to delete or check off habits? ')
-        options = ["[d] Delete", "[c] Check-off", '[c] Cancel']
+        options = ["[d] Delete", "[x] Check-off", '[c] Cancel']
         terminal_menu = TerminalMenu(options)
         menu_entry_index = terminal_menu.show()
         print(
@@ -136,6 +180,10 @@ class CommandlineManager:
             return
 
     def checkoff_habit_command(self):
+        """
+        Handles habit check-off
+        :return:
+        """
         options = list(map(lambda habit: f'#{habit[0]} {habit[1]} ({habit[3]})',
                            self.habit_tracker.habits))
         self.print('Which habit(s) do you want to check-off? (Select one or more to check) ')
@@ -158,6 +206,10 @@ class CommandlineManager:
         self.entry(msg='\nWhat would you like to do next? ')
 
     def delete_habit_command(self):
+        """
+        Handles habit deletion
+        :return:
+        """
         options = list(map(lambda habit: f'#{habit[0]} {habit[1]} ({habit[3]})',
                            self.habit_tracker.habits))
         self.print('Which habit(s) do you want to delete? (Select one or more to check) ')
@@ -180,6 +232,10 @@ class CommandlineManager:
         self.entry(msg='\nWhat would you like to do next? ')
 
     def show_historical_trends(self):
+        """
+        Shows the historical trend analysis
+        :return:
+        """
         habit_with_longest_streak = self.analytics.get_habit_with_longest_streak()
         if habit_with_longest_streak is None:
             self.print(
@@ -194,6 +250,12 @@ class CommandlineManager:
                        f''' ~ #{habit_with_longest_streak.habit_id} {habit_with_longest_streak.name} | Longest Streak: {floor(habit_with_longest_streak.longest_streak_in_days / 7)} week(s)\n''')
 
     def show_current_trends(self):
+        """
+        Shows current trends, like the habit with the longest streaks
+        :return:
+        """
+
+        print('Got here')
         habit_with_longest_current_streak = self.analytics.get_habit_with_longest_current_streak()
         if habit_with_longest_current_streak is None:
             self.print(
@@ -210,6 +272,10 @@ class CommandlineManager:
                        f''' ~ #{habit_with_longest_current_streak.habit_id} {habit_with_longest_current_streak.name} | Current Streak: {habit_with_longest_current_streak.streak_in_days} day(s)\n''')
 
     def show_habits_with_same_periodicity(self):
+        """
+        Shows habits with the same periodicity
+        :return:
+        """
         self.print('Choose periodicity:')
         options = ["[w] Weekly", "[d] Daily", '[e] Exit']
         terminal_menu = TerminalMenu(options)
@@ -236,6 +302,10 @@ class CommandlineManager:
             return
 
     def get_habits_statistics(self):
+        """
+        Prompts a user to choose what analysis they'll like to see.
+        :return:
+        """
         self.print('Choose from one of the following statistics:')
         options = ["[c] Current trends", "[h] Historical trends", "[p] Habits with same periodicity", '[e] Exit']
         terminal_menu = TerminalMenu(options)

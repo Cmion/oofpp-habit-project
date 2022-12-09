@@ -3,6 +3,8 @@ from math import floor
 
 from colorama import Fore
 
+from lib.helpers.date_mod import subtract_date
+
 
 class Habit:
     def __init__(self, name, description, periodicity, streak_in_days=None,
@@ -58,8 +60,16 @@ class Habit:
         :return:
         """
 
-        current_streak_date = datetime.strptime(self.current_streak_date, '%Y-%m-%d %H:%M:%S')
-        current_date = datetime.now()
+        now = datetime.now()
+        is_week_ago = subtract_date(now, weeks=1)
+        is_day_ago = subtract_date(now, days=1)
+
+        # Used when a new habit is created and does not have a current streak date
+        virtual_current_streak_date = is_week_ago if self.periodicity == 'weekly' else is_day_ago
+
+        current_streak_date = virtual_current_streak_date if len(self.current_streak_date) < 1 else datetime.strptime(
+            self.current_streak_date, '%Y-%m-%d %H:%M:%S')
+        current_date = now
         difference = current_date - current_streak_date
         if difference.days > self.periodicity_duration:
             if self.streak_in_days > self.longest_streak_in_days:
@@ -75,8 +85,16 @@ class Habit:
         :return:
         """
 
-        current_streak_date = datetime.strptime(self.current_streak_date, '%Y-%m-%d %H:%M:%S')
-        current_date = datetime.now()
+        now = datetime.now()
+        is_week_ago = subtract_date(now, weeks=1)
+        is_day_ago = subtract_date(now, days=1)
+
+        # Used when a new habit is created and does not have a current streak date
+        virtual_current_streak_date = is_week_ago if self.periodicity == 'weekly' else is_day_ago
+
+        current_streak_date = virtual_current_streak_date if len(self.current_streak_date) < 1 else datetime.strptime(
+            self.current_streak_date, '%Y-%m-%d %H:%M:%S')
+        current_date = now
         difference = current_date - current_streak_date
 
         # current_date_start_of = datetime(current_date.year, current_date.month, current_date.day, 0, 0, 0, 0)
@@ -89,7 +107,7 @@ class Habit:
         if self.periodicity_duration > difference.days:
             if print_error is True:
                 print(Fore.LIGHTRED_EX +
-                      u"\u2715 " + f'''You cannot mark (#{self.habit_id} {self.name}) as complete twice {self.periodicity}
+                      u"\u2715 " + f'''You cannot mark (#{self.habit_id} {self.name}) as complete twice {self.periodicity} 
 ''', end=' ')
             # print(Style.RESET_ALL)
             return None
@@ -113,7 +131,7 @@ class Habit:
         if self.streak_in_days > self.longest_streak_in_days:
             self.longest_streak_in_days = self.streak_in_days
 
-        self.current_streak_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.current_streak_date = now.strftime('%Y-%m-%d %H:%M:%S')
 
         return self
 

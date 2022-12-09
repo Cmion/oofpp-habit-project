@@ -25,8 +25,12 @@ class HabitTracker:
         self.dataframe.sort_values('Streak (days)', inplace=True, ascending=True)
 
     def __insert_sample_data(self):
+        columns = self.database.select_all()
+        if len(columns) >= 1:
+            return
+
         habits = list(map(Habit.to_db_row, create_sample_habits()))
-        self.database.insertMany(habits)
+        self.database.insert_many(habits)
 
     @staticmethod
     def print_from_list(habits):

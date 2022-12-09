@@ -58,7 +58,7 @@ class Database:
                                            habit.streak_in_weeks, habit.longest_streak_in_days))
         self.db.commit()
 
-    def insertMany(self, habits):
+    def insert_many(self, habits):
         """
         Insert multiple habits into the database
         :param habits: list of habits to insert

@@ -1,4 +1,4 @@
-# Object Oriented and Function Programming with Python
+# Object-oriented and Function Programming with Python
 
 ## Setup
 
@@ -20,7 +20,7 @@ Visit [https://www.python.org/downloads/macos/](https://www.python.org/downloads
 
 After the installation completes, check the python version (Note Python version should be > 3.0.0)
 ```shell
-python -V
+python3 -V
 ```
 
 ### Install virtualenv
@@ -47,7 +47,7 @@ Congratulations 🎉, you have successfully installed python,  venv, activated i
 ### To run the project you have to install the project dependencies.
 A requirements.txt file has been provided in order to keep track of the projects dependencies and allow for easy installation.
 ```shell
-python3 pip install -f requirements.txt 
+pip install -r requirements.txt 
 ```
  Yay!!  🎉 🎉, you have successfully installed the project's dependencies. Now let's run the app.
 
@@ -55,6 +55,11 @@ python3 pip install -f requirements.txt
 Make sure you're in the root project directory, then run the following command.
 ```shell
 python3 main.py
+```
+
+*Note: If you are running the app again after setup, make sure your virtual environment is activated using
+```shell
+source venv/bin/activate
 ```
 
 ## Reference

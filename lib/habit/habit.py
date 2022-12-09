@@ -29,7 +29,7 @@ class Habit:
         self.longest_streak_in_days = longest_streak_in_days or 0
         self.name = name
         self.description = description
-        self.periodicity = periodicity
+        self.periodicity = periodicity.lower()
         self.periodicity_duration = self.__periodicity_to_days()
         self.start_date = start_date or datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.current_streak_date = current_streak_date or ''
@@ -61,11 +61,11 @@ class Habit:
         """
 
         now = datetime.now()
-        is_week_ago = subtract_date(now, weeks=1)
+        is_week_ago = subtract_date(now, weeks=2)
         is_day_ago = subtract_date(now, days=1)
 
         # Used when a new habit is created and does not have a current streak date
-        virtual_current_streak_date = is_week_ago if self.periodicity == 'weekly' else is_day_ago
+        virtual_current_streak_date = is_week_ago if self.periodicity.lower() == 'weekly' else is_day_ago
 
         current_streak_date = virtual_current_streak_date if len(self.current_streak_date) < 1 else datetime.strptime(
             self.current_streak_date, '%Y-%m-%d %H:%M:%S')
@@ -86,23 +86,16 @@ class Habit:
         """
 
         now = datetime.now()
-        is_week_ago = subtract_date(now, weeks=1)
+        is_week_ago = subtract_date(now, weeks=2)
         is_day_ago = subtract_date(now, days=1)
 
         # Used when a new habit is created and does not have a current streak date
-        virtual_current_streak_date = is_week_ago if self.periodicity == 'weekly' else is_day_ago
+        virtual_current_streak_date = is_week_ago if self.periodicity.lower() == 'weekly' else is_day_ago
 
-        current_streak_date = virtual_current_streak_date if len(self.current_streak_date) < 1 else datetime.strptime(
-            self.current_streak_date, '%Y-%m-%d %H:%M:%S')
+        current_streak_date = virtual_current_streak_date if (len(self.current_streak_date.strip()) < 1) else \
+            datetime.strptime(self.current_streak_date, '%Y-%m-%d %H:%M:%S')
         current_date = now
         difference = current_date - current_streak_date
-
-        # current_date_start_of = datetime(current_date.year, current_date.month, current_date.day, 0, 0, 0, 0)
-        # current_streak_date_start_of = datetime(current_streak_date.year, current_streak_date.month,
-        #                                         current_streak_date.day, 0, 0, 0, 0)
-        #
-        # if current_date_start_of > current_streak_date_start_of:
-        #     pass
 
         if self.periodicity_duration > difference.days:
             if print_error is True:
@@ -146,7 +139,7 @@ class Habit:
             habit_id=row[0],
             name=row[1],
             description=row[2],
-            periodicity=row[3],
+            periodicity=row[3].lower(),
             start_date=row[4],
             current_streak_date=row[5],
             streak_in_days=row[6],
@@ -162,7 +155,7 @@ class Habit:
         :return :class:tuple
         """
 
-        return (habit.name, habit.description, habit.periodicity,
+        return (habit.name, habit.description, habit.periodicity.lower(),
                 habit.start_date, habit.current_streak_date, habit.streak_in_days,
                 habit.streak_in_weeks, habit.longest_streak_in_days)
 

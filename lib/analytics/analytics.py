@@ -19,6 +19,8 @@ class Analytics:
 
         db_habit_row = cursor.fetchone()
 
+
+
         if db_habit_row is None:
             return None
 

@@ -68,7 +68,7 @@ class CommandlineManager:
         res = input()
         if len(res.strip()) < 1:
             return CommandlineManager.input(text)
-        return res
+        return res.strip()
 
     def entry(self, msg='What would you like to do?'):
         """
@@ -124,8 +124,6 @@ class CommandlineManager:
         if menu_entry_index == 2:
             self.entry()
             return
-
-
 
         self.habit_tracker.add_habit(habit_name, habit_description, options[menu_entry_index].split(' ')[1])
 
@@ -255,21 +253,22 @@ class CommandlineManager:
         :return:
         """
 
-        print('Got here')
         habit_with_longest_current_streak = self.analytics.get_habit_with_longest_current_streak()
+
+        periodicity = habit_with_longest_current_streak.periodicity.lower()
+
         if habit_with_longest_current_streak is None:
             self.print(
                 Fore.LIGHTBLUE_EX + 'No current streaks found, please check-off your habits to start a new streak')
             return
 
-        if habit_with_longest_current_streak.periodicity == 'weekly':
+        if periodicity == 'weekly':
             self.print(Fore.LIGHTWHITE_EX + f'Habit with longest current streak:' + Fore.LIGHTBLUE_EX +
                        f''' ~ #{habit_with_longest_current_streak.habit_id} {habit_with_longest_current_streak.name} | Current Streak: {habit_with_longest_current_streak.streak_in_weeks} week(s)\n''')
             return
 
-        if habit_with_longest_current_streak.periodicity == 'daily':
-            self.print(Fore.LIGHTWHITE_EX + f'Habit with longest current streak:' + Fore.LIGHTBLUE_EX +
-                       f''' ~ #{habit_with_longest_current_streak.habit_id} {habit_with_longest_current_streak.name} | Current Streak: {habit_with_longest_current_streak.streak_in_days} day(s)\n''')
+        self.print(Fore.LIGHTWHITE_EX + f'Habit with longest current streak:' + Fore.LIGHTBLUE_EX +
+                   f''' ~ #{habit_with_longest_current_streak.habit_id} {habit_with_longest_current_streak.name} | Current Streak: {habit_with_longest_current_streak.streak_in_days} day(s)\n''')
 
     def show_habits_with_same_periodicity(self):
         """

@@ -26,8 +26,7 @@ def create_sample_habits():
               start_date=(subtract_date(weeks=50).strftime('%Y-%m-%d %H:%M:%S')),
               current_streak_date=subtract_date(weeks=2).strftime('%Y-%m-%d %H:%M:%S')
               ),
-        Habit(habit_id=4, name='Family', description='''Be home early for dinner, read bedtime stories to Karl, 
-                Jesse and Sophie, spend quality time chitchatting with Katherine (Wife)''', periodicity='daily',
+        Habit(habit_id=4, name='Family', description='''Be home early for dinner''', periodicity='daily',
               streak_in_weeks=323, streak_in_days=323 * 7,
               longest_streak_in_days=323 * 8,
               start_date=(subtract_date(weeks=323).strftime('%Y-%m-%d %H:%M:%S')),

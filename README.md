@@ -55,21 +55,35 @@ A requirements.txt file has been provided in order to keep track of the projects
 ```shell
 pip install -r requirements.txt 
 ```
- Yay!!  🎉 🎉, you have successfully installed the project's dependencies. Now let's run the app.
+
+Yay!!  🎉 🎉, you have successfully installed the project's dependencies. Now let's run the app.
 
 ## Running the app
+
 Make sure you're in the root project directory, then run the following command.
+
 ```shell
 python3 main.py
 ```
 
-*Note: If you are running the app again after setup, make sure your virtual environment is activated using
+*Note: If you are running the app again after setup, make sure your virtual environment is activated using.
+
+#### macOS
+
 ```shell
 source venv/bin/activate
 ```
 
+#### Windows
+
+```shell
+.\venv\Scripts\activate
+```
+
 ## Reference
-GeeksforGeeks. (2022, November 25). Python Virtual Environment | Introduction. https://www.geeksforgeeks.org/python-virtual-environment/ [1]
+
+GeeksforGeeks. (2022, November 25). Python Virtual Environment |
+Introduction. https://www.geeksforgeeks.org/python-virtual-environment/ [1]
 
 
 

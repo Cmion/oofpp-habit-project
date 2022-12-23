@@ -31,6 +31,7 @@ class CommandlineManager:
         """
         print(Style.RESET_ALL)
         self.habit_tracker.show_data()
+        self.habit_tracker.database.close_connection();
         self.is_active = False
 
     @staticmethod
@@ -182,6 +183,7 @@ class CommandlineManager:
         Handles habit check-off
         :return:
         """
+        # Generates the list of commands for the user to select
         options = list(map(lambda habit: f'#{habit[0]} {habit[1]} ({habit[3]})',
                            self.habit_tracker.habits))
         self.print('Which habit(s) do you want to check-off? (Select one or more to check) ')

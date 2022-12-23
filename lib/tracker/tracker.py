@@ -17,6 +17,9 @@ class HabitTracker:
         self.__refresh()
 
     def __refresh(self):
+        """
+        Refresh the habits table
+        """
         self.habits = self.database.select_all()
         self.dataframe = pandas.DataFrame(self.habits, columns=['Id', 'Name', 'Description', 'Periodicity',
                                                                 'Start date', 'Current streak date', 'Streak (days)',
@@ -25,6 +28,9 @@ class HabitTracker:
         self.dataframe.sort_values('Streak (days)', inplace=True, ascending=True)
 
     def __insert_sample_data(self):
+        """
+        Insert sample habits into the database
+        """
         columns = self.database.select_all()
         if len(columns) >= 1:
             return
@@ -34,6 +40,11 @@ class HabitTracker:
 
     @staticmethod
     def print_from_list(habits):
+        """
+        Prints to the console(terminal) from the given a list of habits.
+        :param habits:
+        :return:
+        """
         columns = ['Id', 'Name', 'Description', 'Periodicity',
                    'Start date', 'Current streak date', 'Streak (days)',
                    'Streak (weeks)', 'Longest streak (days)']
@@ -70,11 +81,23 @@ class HabitTracker:
         print(Fore.LIGHTWHITE_EX + table.get_string())
 
     def add_habit(self, name, description, periodicity):
+        """
+        Adds a new habit to the database.
+        :param name:
+        :param description:
+        :param periodicity:
+        :return:
+        """
         habit = Habit(name, description, periodicity)
         self.database.insert(habit)
         self.__refresh()
 
     def remove_habit(self, habit_id):
+        """
+        Removes an habit from the database
+        :param habit_id:
+        :return:
+        """
         try:
             self.database.delete(habit_id)
             self.__refresh()
@@ -83,6 +106,11 @@ class HabitTracker:
             return None
 
     def checkoff_habit(self, habit_id):
+        """
+        Marks a habit as completed
+        :param habit_id:
+        :return:
+        """
         db_row = self.database.select_one(habit_id)
         if db_row is None:
             return None

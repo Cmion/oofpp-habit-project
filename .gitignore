@@ -1,4 +1,7 @@
 .idea/
 *.iml
+*.db
+*.sqlite
+*.sql
 venv/
 __pycache__

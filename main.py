@@ -9,10 +9,12 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "d", ["database="])
     except getopt.GetoptError:
-        print('usage: main.py -d <db-file-path> -o')
+        print('usage: main.py -d <db-file-path>')
         sys.exit(2)
     for opt, arg in opts:
-        if opt in ("-d", "--database"):
+        if opt == '-d':
+            db_file = args[0]
+        if opt == '--database':
             db_file = arg
     # print('Input file is ', db_file)
 

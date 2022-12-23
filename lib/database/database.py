@@ -134,5 +134,9 @@ class Database:
         self.db.commit()
 
     def close_connection(self):
+        """
+        Closes database connection
+        :return:
+        """
         self.cursor.close()
         self.db.close()

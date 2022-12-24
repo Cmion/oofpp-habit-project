@@ -205,6 +205,34 @@ class CommandlineManager:
 
         self.entry(msg='\nWhat would you like to do next? ')
 
+    def confirm_and_delete(self, selected, all_options):
+        """
+        Handles confirmation and deletion of habits
+        :param selected:
+        :param all_options:
+        :return:
+        """
+        options = ["[y] Yes", "[n] No", '[b] Go back']
+        self.print('Are you sure you want to delete this habit(s)? ')
+        terminal_menu = TerminalMenu(options)
+        menu_entry_index = terminal_menu.show()
+
+        if menu_entry_index == 0:
+            for index in selected:
+                entry = all_options[index]
+                habit_id = str(entry.split(' ')[0])[1]
+                response = self.habit_tracker.remove_habit(habit_id=int(habit_id))
+                if response is None:
+                    print(self.colorize(u"\u2715" + f" Deleting {entry} failed. Try again!", color=Fore.LIGHTRED_EX))
+                else:
+                    print(self.colorize(u"\u2714" + f" {entry} deleted successfully", color=Fore.LIGHTGREEN_EX))
+
+        if menu_entry_index == 1:
+            pass
+
+        if menu_entry_index == 2:
+            self.delete_habit_command()
+
     def delete_habit_command(self):
         """
         Handles habit deletion
@@ -220,14 +248,7 @@ class CommandlineManager:
             self.colorize('\n'.join(map(lambda item: u"\u007E " + item, terminal_menu.chosen_menu_entries)),
                           color=Fore.LIGHTYELLOW_EX))
 
-        for index in menu_entry_indices:
-            entry = options[index]
-            habit_id = str(entry.split(' ')[0])[1]
-            response = self.habit_tracker.remove_habit(habit_id=int(habit_id))
-            if response is None:
-                print(self.colorize(u"\u2715" + f" Deleting {entry} failed. Try again!", color=Fore.LIGHTRED_EX))
-            else:
-                print(self.colorize(u"\u2714" + f" {entry} deleted successfully", color=Fore.LIGHTGREEN_EX))
+        self.confirm_and_delete(menu_entry_indices, options)
 
         self.entry(msg='\nWhat would you like to do next? ')
 

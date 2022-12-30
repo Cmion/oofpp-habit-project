@@ -66,6 +66,19 @@ Make sure you're in the root project directory, then run the following command.
 python3 main.py
 ```
 
+The above command accepts a custom database parameter. Note that database file does not need to be created, passing any
+string value to the command will automatically create a _.db_ file.
+
+```shell
+python3 main.py --database=my_custom_db.db
+```
+
+Or
+
+```shell
+python3 main.py -d my_custom_db.db
+```
+
 *Note: If you are running the app again after setup, make sure your virtual environment is activated using.
 
 #### macOS

@@ -22,6 +22,13 @@ class Database:
         except sqlite3.Error as e:
             print(e)
 
+    def initiate_db_test(self):
+        self.cursor.execute("DROP TABLE IF EXISTS HABIT")
+        self.create_table()
+
+    def is_connected(self):
+        return self.db is not None and self.cursor is not None
+
     def create_table(self):
         """ Create the database table if it does not exist
             :return: None
@@ -126,7 +133,8 @@ class Database:
         START_DATE = :start_date, CURRENT_STREAK_DATE = :current_streak_date, 
                         STREAK_IN_DAYS = :streak_in_days, STREAK_IN_WEEKS = :streak_in_weeks, 
                         LONGEST_STREAK_IN_DAYS = :longest_streak_in_days where ID = :habit_id;''',
-                            {'habit_id': habit_id, 'name': habit.name, 'description': habit.description, 'periodicity': habit.periodicity,
+                            {'habit_id': habit_id, 'name': habit.name, 'description': habit.description,
+                             'periodicity': habit.periodicity,
                              'start_date': habit.start_date, 'streak_in_weeks': habit.streak_in_weeks,
                              'current_streak_date': habit.current_streak_date,
                              'streak_in_days': habit.streak_in_days,

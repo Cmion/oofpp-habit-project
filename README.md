@@ -93,6 +93,14 @@ source venv/bin/activate
 .\venv\Scripts\activate
 ```
 
+## Test
+
+The test command runs a simple unit test on the app classes and helper functions.
+
+```shell
+pytest test/
+```
+
 ## Reference
 
 GeeksforGeeks. (2022, November 25). Python Virtual Environment |
